@@ -1,0 +1,150 @@
+# AUTHORED-BY Claude Fable 5
+#
+# @jeswr spec-companion vocabulary — the MINIMAL terms the suite's machine-readable
+# spec companions need BEYOND the vocabularies they reuse. Reuse-first discipline:
+#
+#   spec:   http://www.w3.org/ns/spec#            (Capadisli; the Solid Protocol's own
+#           requirement markup vocabulary: spec:Requirement, spec:statement,
+#           spec:requirementLevel + the MUST/MUSTNOT/... SKOS scheme,
+#           spec:requirementSubject, spec:testCase, spec:SecurityConsiderations, …)
+#   td:     http://www.w3.org/2006/03/test-description#   (test cases; used by the
+#           Solid conformance-test-harness manifests together with spec:)
+#   earl:   http://www.w3.org/ns/earl#             (test results, when reported)
+#   dcterms:, prov:, skos:, rdfs:                  (metadata, provenance, notation)
+#
+# This file mints ONLY: the companion-document class, the conformance-class marker,
+# the E / A-int / A-exist / P testability spine (ported from
+# jeswr/solid-certification v2-speculative), the test-gap (honest no-vector
+# justification) node, and four small link/annotation properties.
+#
+# Namespace: https://w3id.org/jeswr/spec-companion#   (w3id redirect = a needs:user
+# follow-up, consistent with the other w3id.org/jeswr vocabularies).
+
+@prefix sc:      <https://w3id.org/jeswr/spec-companion#> .
+@prefix spec:    <http://www.w3.org/ns/spec#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann:    <http://purl.org/vocab/vann/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<https://w3id.org/jeswr/spec-companion#>
+    a owl:Ontology ;
+    dcterms:title "Spec-companion vocabulary"@en ;
+    dcterms:description "Minimal terms for machine-readable normative-statement companions to the @jeswr specification family. Complements (never replaces) http://www.w3.org/ns/spec#: the companion model is the Solid Protocol's RDFa requirement model, published as a sidecar Turtle graph, extended with the certification testability spine and honest test-gap accounting."@en ;
+    vann:preferredNamespacePrefix "sc" ;
+    vann:preferredNamespaceUri "https://w3id.org/jeswr/spec-companion#" ;
+    dcterms:created "2026-07-06"^^xsd:date ;
+    dcterms:license <https://opensource.org/licenses/MIT> ;
+    rdfs:seeAlso <http://www.w3.org/ns/spec#> ,
+                 <https://github.com/jeswr/solid-certification> .
+
+#################################################################
+# Classes
+#################################################################
+
+sc:CompanionDocument a rdfs:Class ;
+    rdfs:label "Companion document"@en ;
+    rdfs:comment "A machine-readable normative-statement graph published ALONGSIDE a full-text specification, which it describes but never replaces. Carries provenance (who extracted it, from which pinned spec version) and the extraction notes (ambiguities the extraction surfaced)."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:ConformanceClass a rdfs:Class ;
+    rdfs:label "Conformance class"@en ;
+    rdfs:comment "A class of products the specification binds requirements to (e.g. a resource server, a client). Every spec:requirementSubject in a companion MUST be one of the companion's declared conformance classes — this is what makes the actor binding closed and checkable."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:TestabilityLevel a rdfs:Class ;
+    rdfs:label "Testability level"@en ;
+    rdfs:comment "The testability spine: HOW conformance to a normative statement can be checked. Ported from the Solid-certification v2 testability spine (E / A-int / A-exist / P). Exactly one level per statement; the level is a claim about the statement as written, not about whether a test currently exists."@en ;
+    dcterms:source <https://github.com/jeswr/solid-certification/blob/main/v2-speculative/README.md> ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:TestGap a rdfs:Class ;
+    rdfs:label "Test gap"@en ;
+    rdfs:comment "An honest, described justification for a normative statement having no linked conformance test (the per-statement analogue of agentic-solid-conformance's GAPS.md). A mandatory (MUST/MUST NOT) statement tagged Enforceable must link a test case OR a test gap — never neither."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+#################################################################
+# The testability spine (individuals)
+#################################################################
+
+sc:Enforceable a sc:TestabilityLevel ;
+    skos:notation "E" ;
+    rdfs:label "Enforceable / deterministically testable"@en ;
+    skos:definition "Conformance is checkable by a deterministic black-box test: a conformance vector or request/response exchange whose expected outcome is fixed by the statement (a conformant implementation refuses the non-conformant action, or produces the pinned output)."@en .
+
+sc:AccountableIntegrity a sc:TestabilityLevel ;
+    skos:notation "A-int" ;
+    rdfs:label "Accountable, integrity-verifiable"@en ;
+    skos:definition "Conformance is checkable by independently verifying an artifact the implementation produces (a signature, a derivation, a hash, a provenance chain) — the action itself is not refused at request time, but its trail re-verifies cryptographically or structurally."@en .
+
+sc:AccountableExistence a sc:TestabilityLevel ;
+    skos:notation "A-exist" ;
+    rdfs:label "Accountable, audit/inspection only"@en ;
+    skos:definition "Conformance is observable only by audit or inspection, not by a deterministic black-box vector: negative internal properties (MUST NOT log/persist a key), timing disciplines (constant-time comparison), concurrency properties (atomicity under race), and deployment topology (where TLS terminates). Never certifiable as a guarantee; disclosed, not proven."@en .
+
+sc:Premature a sc:TestabilityLevel ;
+    skos:notation "P" ;
+    rdfs:label "Premature / not testable as specified"@en ;
+    skos:definition "The statement has no testable property as written (the behaviour is unreachable in practice, the hook is unspecified, or the referenced mechanism is not yet stable). A P tag is a signal to the spec editor, not a licence to skip: it must carry a justification."@en .
+
+#################################################################
+# Properties
+#################################################################
+
+sc:companionOf a rdf:Property ;
+    rdfs:label "companion of"@en ;
+    rdfs:domain sc:CompanionDocument ;
+    rdfs:comment "Links the companion document to the IRI of the full-text specification it describes. Exactly one."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:specVersion a rdf:Property ;
+    rdfs:label "spec version"@en ;
+    rdfs:domain sc:CompanionDocument ;
+    rdfs:comment "The exact version of the full text this companion was extracted from — a git commit sha or a dated-version identifier. The companion is stale (and its repo's gate should fail) when the spec moves without the companion."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:testability a rdf:Property ;
+    rdfs:label "testability"@en ;
+    rdfs:domain spec:Requirement ;
+    rdfs:range sc:TestabilityLevel ;
+    rdfs:comment "Exactly one testability-spine level per normative statement."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:anchor a rdf:Property ;
+    rdfs:label "anchor"@en ;
+    rdfs:comment "The resolvable section (or element) anchor in the PUBLISHED full-text specification where this statement lives — always under the spec's own base IRI, always carrying a fragment. This is the human path back from the graph to the prose."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:definedBy a rdf:Property ;
+    rdfs:label "defined by (anchor)"@en ;
+    rdfs:domain sc:ConformanceClass ;
+    rdfs:comment "The anchor in the full-text specification where this conformance class is defined."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:testGap a rdf:Property ;
+    rdfs:label "test gap"@en ;
+    rdfs:domain spec:Requirement ;
+    rdfs:range sc:TestGap ;
+    rdfs:comment "Links a statement with no conformance test to its honest justification. The guardrail: an Enforceable MUST/MUST NOT statement carries spec:testCase or sc:testGap — never neither. Multiple statements may share one gap node."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:restates a rdf:Property ;
+    rdfs:label "restates"@en ;
+    rdfs:domain spec:Requirement ;
+    rdfs:range spec:Requirement ;
+    rdfs:comment "This statement restates (consolidates, or is the consolidated form of) another statement in the same specification — e.g. a fail-closed rules section repeating a requirement stated where the mechanism is defined. Keeps the statement inventory deduplicated without hiding that the prose says it twice."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:extractionNote a rdf:Property ;
+    rdfs:label "extraction note"@en ;
+    rdfs:domain sc:CompanionDocument ;
+    rdfs:comment "An ambiguity or authoring defect the extraction SURFACED in the full text: normative-by-context algorithms with no BCP 14 keyword, lowercase 'may/should' used normatively, non-BCP14 keyword forms ('REQUIRES'), multi-keyword sentences. Extraction notes are errata candidates for the spec editor — the companion records them rather than silently papering over them."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .
+
+sc:formalModel a rdf:Property ;
+    rdfs:label "formal model"@en ;
+    rdfs:comment "Optional link from a specification or statement to a machine-checked formal model of the behaviour (TLA+, Alloy, or an executable state-machine description). A seam, not a phase-1 requirement: protocol/state-machine specs with a security core (session establishment, anti-replay windows) are the intended users."@en ;
+    rdfs:isDefinedBy <https://w3id.org/jeswr/spec-companion#> .

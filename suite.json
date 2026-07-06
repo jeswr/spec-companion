@@ -1,0 +1,17 @@
+{
+  "name": "spec-companion",
+  "kind": "tooling",
+  "status": "phase-1",
+  "description": "Machine-readable normative-statement companions for the @jeswr spec family: w3.org/ns/spec sidecar graphs + the E/A-int/A-exist/P testability spine + a SHACL spec-of-specs authoring guardrail + validator. Worked example: dpop-sk-spec (73 statements, validating).",
+  "conformsTo": [],
+  "relatedRepos": [
+    "jeswr/dpop-sk-spec",
+    "jeswr/a2a-rdf-extension",
+    "jeswr/solid-webauthn-reauth-spec",
+    "jeswr/agent-authz-credential-spec",
+    "jeswr/lws-spec",
+    "jeswr/agentic-solid-conformance",
+    "jeswr/solid-certification",
+    "jeswr/standards-interop-map"
+  ]
+}

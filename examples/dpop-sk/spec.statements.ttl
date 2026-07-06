@@ -1,0 +1,800 @@
+# AUTHORED-BY Claude Fable 5
+#
+# Machine-readable normative-statement companion for DPoP-SK
+# (https://jeswr.github.io/dpop-sk-spec/). COMPLEMENTARY: the full-text spec is the
+# normative document and is unchanged; this graph enumerates its normative statements
+# so tooling (conformance suites, the interop map, coverage gates) can consume them.
+#
+# Model: the Solid Protocol's own requirement markup (http://www.w3.org/ns/spec#) as a
+# sidecar graph, + the certification testability spine (E / A-int / A-exist / P), +
+# honest per-statement test-gap accounting. Statement texts are VERBATIM quotes of the
+# spec source (validator-enforced against the pinned index.html — tags stripped,
+# entities decoded, [[refs]] unbracketed, whitespace collapsed).
+#
+# Canonical future home: the jeswr/dpop-sk-spec repo, published beside the spec as
+# https://jeswr.github.io/dpop-sk-spec/spec.statements.ttl (the @base below).
+
+@base <https://jeswr.github.io/dpop-sk-spec/spec.statements.ttl> .
+@prefix sc:      <https://w3id.org/jeswr/spec-companion#> .
+@prefix spec:    <http://www.w3.org/ns/spec#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# The companion document
+#################################################################
+
+<> a sc:CompanionDocument ;
+    dcterms:title "DPoP-SK normative-statement companion"@en ;
+    sc:companionOf <https://jeswr.github.io/dpop-sk-spec/> ;
+    sc:specVersion "f485855f813180ca4e22f19f84434eb91615cd71" ;
+    dcterms:created "2026-07-06"^^xsd:date ;
+    prov:wasAttributedTo <https://jeswr.org/#me> ;
+    dcterms:description "Extracted with AI assistance (Claude Fable 5, Anthropic) from the pinned spec source; awaiting review by the human editor, like the spec itself."@en ;
+    sc:extractionNote "Verification steps 1-4 and 7-8 of #attestation-verification are normative only by the lead-in ('Verification, in order, all fail-closed:') and carry no BCP 14 keyword; errata candidate: give the lead-in a MUST." ;
+    sc:extractionNote "The tls-exporter key-derivation formula (#kd-exporter, 'Both ends compute...') is definitional prose with no BCP 14 keyword; conformance to it hangs on the conformance section's 'implements' list. Errata candidate." ;
+    sc:extractionNote "'The flavour REQUIRES TLS 1.3.' (#kd-exporter) uses the non-BCP14 form REQUIRES; the requirement is captured here via DPOPSK-EST-6's MUST. Errata candidate: rephrase with a BCP 14 keyword." ;
+    sc:extractionNote "'Neither party may log or persist it' (#establishment-response) uses lowercase 'may' with mandatory intent (RFC 8174 reserves only UPPERCASE forms); the enforced form is DPOPSK-SEC-KH-1's MUST NOT. Errata candidate." ;
+    sc:extractionNote "'It MUST use the https scheme and SHOULD be same-origin with resource.' (#discovery) mixes two requirement levels in one sentence; split here into DPOPSK-DISC-1 and DPOPSK-DISC-2." ;
+    sc:extractionNote "The conformance section (#impl-status) enumerates what each conformance class 'implements' without BCP 14 force; the per-statement inventory here is the checkable form." .
+
+#################################################################
+# The specification
+#################################################################
+
+<https://jeswr.github.io/dpop-sk-spec/> a spec:Specification ;
+    dcterms:title "DPoP-SK: Negotiated Symmetric Session Keys for DPoP-Bound Requests"@en ;
+    spec:conformance <https://jeswr.github.io/dpop-sk-spec/#conformance> ;
+    spec:consideration <https://jeswr.github.io/dpop-sk-spec/#security-considerations> ,
+                       <https://jeswr.github.io/dpop-sk-spec/#privacy-considerations> ;
+    spec:requirement
+        <#DPOPSK-REL-1> , <#DPOPSK-REL-2> , <#DPOPSK-REL-3> ,
+        <#DPOPSK-DISC-1> , <#DPOPSK-DISC-2> , <#DPOPSK-DISC-3> , <#DPOPSK-DISC-4> ,
+        <#DPOPSK-DISC-5> , <#DPOPSK-DISC-6> ,
+        <#DPOPSK-EST-1> , <#DPOPSK-EST-2> , <#DPOPSK-EST-3> , <#DPOPSK-EST-4> ,
+        <#DPOPSK-EST-5> , <#DPOPSK-EST-6> , <#DPOPSK-EST-7> ,
+        <#DPOPSK-RESP-1> , <#DPOPSK-RESP-2> , <#DPOPSK-RESP-3> , <#DPOPSK-RESP-4> ,
+        <#DPOPSK-RESP-5> , <#DPOPSK-RESP-6> , <#DPOPSK-RESP-7> , <#DPOPSK-RESP-8> ,
+        <#DPOPSK-RESP-9> ,
+        <#DPOPSK-KD-1> , <#DPOPSK-STATE-1> ,
+        <#DPOPSK-ATT-1> , <#DPOPSK-ATT-2> , <#DPOPSK-ATT-3> , <#DPOPSK-ATT-4> ,
+        <#DPOPSK-ATT-5> , <#DPOPSK-ATT-6> , <#DPOPSK-ATT-7> ,
+        <#DPOPSK-VER-1> , <#DPOPSK-VER-2> , <#DPOPSK-VER-3> , <#DPOPSK-VER-4> ,
+        <#DPOPSK-VER-5> , <#DPOPSK-VER-6> , <#DPOPSK-VER-7> , <#DPOPSK-VER-8> ,
+        <#DPOPSK-AR-1> , <#DPOPSK-AR-2> , <#DPOPSK-AR-3> , <#DPOPSK-AR-4> ,
+        <#DPOPSK-AR-5> , <#DPOPSK-AR-6> , <#DPOPSK-AR-7> , <#DPOPSK-AR-8> ,
+        <#DPOPSK-AR-9> ,
+        <#DPOPSK-LT-1> , <#DPOPSK-LT-2> , <#DPOPSK-LT-3> , <#DPOPSK-LT-4> ,
+        <#DPOPSK-LT-5> , <#DPOPSK-LT-6> , <#DPOPSK-LT-7> , <#DPOPSK-LT-8> ,
+        <#DPOPSK-LT-9> ,
+        <#DPOPSK-DG-1> , <#DPOPSK-DG-2> , <#DPOPSK-DG-3> , <#DPOPSK-DG-4> ,
+        <#DPOPSK-DG-5> , <#DPOPSK-DG-6> ,
+        <#DPOPSK-SEC-ED-1> , <#DPOPSK-SEC-ED-2> , <#DPOPSK-SEC-MITM-1> ,
+        <#DPOPSK-SEC-KH-1> , <#DPOPSK-SEC-KH-2> , <#DPOPSK-SEC-KH-3> , <#DPOPSK-SEC-KH-4> .
+
+<https://jeswr.github.io/dpop-sk-spec/#security-considerations> a spec:SecurityConsiderations .
+
+#################################################################
+# Conformance classes
+#################################################################
+
+<#ResourceServer> a sc:ConformanceClass ;
+    rdfs:label "DPoP-SK resource server"@en ;
+    sc:definedBy <https://jeswr.github.io/dpop-sk-spec/#terminology> .
+
+<#Client> a sc:ConformanceClass ;
+    rdfs:label "DPoP-SK client"@en ;
+    sc:definedBy <https://jeswr.github.io/dpop-sk-spec/#terminology> .
+
+#################################################################
+# Test gaps (honest no-vector justifications)
+#################################################################
+
+<#gap-no-vectors-yet> a sc:TestGap ;
+    dcterms:description "No conformance vectors exist yet for this profile: the spec is design-first, implementation-pending (see the spec's Conformance and implementation status section — 'There are no implementations of this profile as of this draft.'). Vectors are planned alongside the solid-server-rs Tier-2 reference implementation, homed as a dpop-sk suite in jeswr/agentic-solid-conformance; the spec's execution-verified tools/compute-examples.mjs (key derivation, confirm value, signature base, HMAC tag) is the seed fixture set."@en .
+
+<#gap-counter-exhaustion> a sc:TestGap ;
+    dcterms:description "Not testable as specified: exhausting the 64-bit counter space (2^64 - 1 values) is unreachable in any practical test run, and the spec itself calls the bound theoretical. The statement is retained for completeness; a unit-level test could only exercise an artificially lowered bound, which the spec does not define."@en .
+
+#################################################################
+# Normative statements
+#
+# Per statement: stable id, verbatim quote (validator-checked against the pinned
+# source), canonical RFC 2119 level, actor binding, testability tag, anchor, and
+# test-case link or honest gap. rdfs:comment carries context where a quote is a
+# sentence fragment; sc:condition-style preconditions live in the comment for phase 1.
+#################################################################
+
+### Relationship to DPoP and Solid-OIDC (#relationship)
+
+<#DPOPSK-REL-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-REL-1" ;
+    spec:statement "A resource server implementing DPoP-SK MUST continue to accept ordinary per-request DPoP exactly as before." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#relationship> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-REL-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-REL-2" ;
+    spec:statement "A client MUST NOT use DPoP-SK against a server that has not advertised it" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#relationship> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-REL-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-REL-3" ;
+    spec:statement "An access token MUST NOT ever be accepted bare (bearer-style)." ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#relationship> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+### Discovery and negotiation (#discovery)
+
+<#DPOPSK-DISC-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DISC-1" ;
+    spec:statement "It MUST use the https scheme" ;
+    rdfs:comment "'It' = the pop_session endpoint member (the session establishment endpoint URL)."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#discovery> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-DISC-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DISC-2" ;
+    spec:statement "SHOULD be same-origin with resource." ;
+    rdfs:comment "Subject of the fragment: the pop_session endpoint member. Split from the same sentence as DPOPSK-DISC-1 (two levels in one sentence; see the companion's extraction notes)."@en ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#discovery> .
+
+<#DPOPSK-DISC-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DISC-3" ;
+    spec:statement "A server MUST NOT advertise tls-exporter on any deployment where it does not terminate TLS in the same process that evaluates requests" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Deployment-topology property: where TLS terminates is not observable black-box; checkable only by deployment audit."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#discovery> .
+
+<#DPOPSK-DISC-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DISC-4" ;
+    spec:statement "Clients MUST ignore a pop_session member whose profile they do not recognise." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#discovery> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-DISC-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DISC-5" ;
+    spec:statement "A server MAY additionally direct clients to the metadata document from any 401 challenge using the resource_metadata parameter of WWW-Authenticate" ;
+    spec:requirementLevel spec:MAY ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#discovery> .
+
+<#DPOPSK-DISC-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DISC-6" ;
+    spec:statement "A client MUST NOT attempt establishment unless the metadata offers an algorithm and a channel binding flavour it supports." ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#discovery> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+### Session establishment — request (#establishment-request)
+
+<#DPOPSK-EST-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-1" ;
+    spec:statement "The request MUST be authenticated as an ordinary DPoP request: the server MUST perform the complete RFC9449 Section 4.3 validation of the proof" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-EST-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-2" ;
+    spec:statement "A session MUST NOT be created if any check fails." ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-EST-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-3" ;
+    spec:statement "If the server cannot satisfy it exactly it MUST refuse with 400" ;
+    rdfs:comment "'It' = the requested channel binding flavour (the establishment body's cb member, which is a demand, not a menu)."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-EST-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-4" ;
+    spec:statement "MUST NOT substitute another flavour" ;
+    rdfs:comment "Continuation of the DPOPSK-EST-3 sentence: on an unsatisfiable cb demand the server refuses; it never answers with a different flavour."@en ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-EST-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-5" ;
+    spec:statement "the server MUST additionally verify that the request arrived on a TLS 1.3 connection terminated by the server process itself" ;
+    rdfs:comment "Condition: cb=tls-exporter establishment only. Self-termination is deployment topology (audit-only); the TLS-version half is black-box testable via DPOPSK-EST-6."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> .
+
+<#DPOPSK-EST-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-6" ;
+    spec:statement "MUST reject establishment over TLS < 1.3" ;
+    rdfs:comment "Condition: cb=tls-exporter establishment only. Captures the #kd-exporter 'The flavour REQUIRES TLS 1.3.' requirement in BCP 14 form (see extraction notes)."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-EST-7> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-EST-7" ;
+    spec:statement "The server SHOULD rate-limit this endpoint at least as strictly as any authenticated write" ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Rate limiting is observable under load but the threshold is deployment policy; audit-checked."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-request> .
+
+### Session establishment — response (#establishment-response)
+
+<#DPOPSK-RESP-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-1" ;
+    spec:statement "MUST contain at least 128 bits of CSPRNG output, encoded base64url without padding" ;
+    rdfs:comment "Subject of the fragment: the session_id response member. Length and encoding are black-box observable, but the CSPRNG-source claim is only auditable — hence A-exist."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> .
+
+<#DPOPSK-RESP-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-2" ;
+    spec:statement "servers MUST NOT reuse one" ;
+    rdfs:comment "'One' = a session_id value."@en ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-3" ;
+    spec:statement "It MUST equal the requested flavour" ;
+    rdfs:comment "'It' = the response cb member."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-4" ;
+    spec:statement "a client MUST abort (discard the session, use plain DPoP) if it differs" ;
+    rdfs:comment "'It' = the response cb member vs the requested flavour."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-5" ;
+    spec:statement "key (REQUIRED when cb=none; MUST be absent otherwise)" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-6" ;
+    spec:statement "confirm (REQUIRED when cb=tls-exporter; MUST be absent otherwise)" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-7> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-7" ;
+    spec:statement "A client MUST verify it and MUST discard the session on mismatch." ;
+    rdfs:comment "'It' = the confirm key-confirmation value; the derivation and expected value are execution-verified by the spec's tools/compute-examples.mjs."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-8> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-8" ;
+    spec:statement "The response MUST carry Cache-Control: no-store." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-RESP-9> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-RESP-9" ;
+    spec:statement "Browser clients SHOULD import it as a non-extractable WebCrypto HMAC key and discard the raw bytes immediately." ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#establishment-response> .
+
+### Key derivation (#kd-exporter) and server state (#server-state)
+
+<#DPOPSK-KD-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-KD-1" ;
+    spec:statement "Implementations MUST use the exporter_master_secret" ;
+    rdfs:comment "Condition: cb=tls-exporter derivation. The derivation pipeline (HKDF salt/info construction) is deterministic and vectorable from a fixed EKM — the spec's tools/compute-examples.mjs reproduces it; using the wrong exporter secret manifests as a key-confirmation mismatch."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#kd-exporter> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-STATE-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-STATE-1" ;
+    spec:statement "The store MUST be capacity-bounded" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Capacity bounds and eviction policy are implementation state, auditable but not deterministically black-box testable."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#server-state> .
+
+### Per-request attestation — construction (#attestation-request)
+
+<#DPOPSK-ATT-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-1" ;
+    spec:statement "Inside an established session the client MUST NOT send a DPoP proof header field with attested requests" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-ATT-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-2" ;
+    spec:statement """The covered components MUST include, at minimum and in this order: ("@method" "@target-uri" "authorization")""" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-ATT-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-3" ;
+    spec:statement "Clients MAY cover additional components" ;
+    spec:requirementLevel spec:MAY ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> .
+
+<#DPOPSK-ATT-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-4" ;
+    spec:statement "servers MUST verify whatever set was declared." ;
+    rdfs:comment "'Set' = the declared covered-component set of the attestation signature."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-ATT-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-5" ;
+    spec:statement "created (REQUIRED, Integer), keyid (REQUIRED, the session identifier)" ;
+    rdfs:comment "The REQUIRED signature parameters; the source sentence continues with nonce (REQUIRED, the counter) — the counter discipline itself is DPOPSK-AR-1..5."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-ATT-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-6" ;
+    spec:statement "tag (REQUIRED, the exact value dpop-sk)" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-ATT-7> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-ATT-7" ;
+    spec:statement "if present it MUST equal the session's algorithm" ;
+    rdfs:comment "Condition: the OPTIONAL alg signature parameter is present. Server-side enforcement is DPOPSK-DG-5."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-request> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+### Per-request attestation — verification (#attestation-verification, #challenge)
+
+<#DPOPSK-VER-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-1" ;
+    spec:statement "the server MUST process it under this profile exclusively" ;
+    rdfs:comment "Condition: the request bears a signature whose tag is dpop-sk."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-verification> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-VER-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-2" ;
+    spec:statement "it MUST NOT fall back to evaluating a DPoP header also present on the same request" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-verification> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-VER-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-3" ;
+    spec:statement "MUST NOT treat the access token as bearer under any outcome" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-verification> ;
+    sc:testGap <#gap-no-vectors-yet> ;
+    sc:restates <#DPOPSK-REL-3> .
+
+<#DPOPSK-VER-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-4" ;
+    spec:statement "servers SHOULD apply the same window they apply to DPoP iat" ;
+    rdfs:comment "The freshness acceptance window for the created signature parameter."@en ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-verification> .
+
+<#DPOPSK-VER-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-5" ;
+    spec:statement "This step MUST complete successfully before any session-state mutation." ;
+    rdfs:comment "'This step' = signature verification (step 6). Black-box testable via the forged-traffic window-burn probe (adversarial-review entry A7)."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#attestation-verification> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-VER-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-6" ;
+    spec:statement "Any failure of steps 1–7 MUST yield 401 with the server's standard WWW-Authenticate: DPoP challenge" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#challenge> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-VER-7> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-7" ;
+    spec:statement "A DPoP-SK client receiving a 401 on an attested request MUST treat the session as dead and either re-establish or fall back to per-request DPoP" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#challenge> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-VER-8> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-VER-8" ;
+    spec:statement "servers MUST NOT emit, and clients MUST NOT require, any DPoP-SK-specific error code" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#challenge> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+### Anti-replay (#anti-replay)
+
+<#DPOPSK-AR-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-1" ;
+    spec:statement "the client MUST start at 1 and assign strictly increasing values — never reusing one" ;
+    rdfs:comment "The nonce parameter's per-session counter discipline."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-AR-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-2" ;
+    spec:statement "SHOULD increment by exactly 1" ;
+    rdfs:comment "Continuation of DPOPSK-AR-1's sentence (gaps are tolerated but waste window space)."@en ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> .
+
+<#DPOPSK-AR-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-3" ;
+    spec:statement "Values MUST fit in an unsigned 64-bit integer" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-AR-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-4" ;
+    spec:statement "a client that could exhaust the space MUST re-establish first" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Premature ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> ;
+    sc:testGap <#gap-counter-exhaustion> .
+
+<#DPOPSK-AR-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-5" ;
+    spec:statement "Servers MUST reject non-numeric, zero, or >64-bit values at parse time." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-AR-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-6" ;
+    spec:statement "W MUST be at least 128" ;
+    rdfs:comment "W = the receive-window width."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-AR-7> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-7" ;
+    spec:statement "SHOULD be 1024." ;
+    rdfs:comment "Continuation of DPOPSK-AR-6's sentence: the recommended window width."@en ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> .
+
+<#DPOPSK-AR-8> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-8" ;
+    spec:statement "the window MUST NOT be consulted-and-mutated, advanced, or shifted for any request whose HMAC has not verified" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-AR-9> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-AR-9" ;
+    spec:statement "The signature-verify + window check-and-mark pair for one session MUST be atomic with respect to concurrent requests" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Concurrency atomicity is exercisable only by nondeterministic race probing; deterministic vectors cannot pin it. A formal model (sc:formalModel seam) is the stronger future check."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#anti-replay> .
+
+### Session lifetime, rotation, revocation, termination (#lifetime)
+
+<#DPOPSK-LT-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-1" ;
+    spec:statement "expires_in MUST NOT exceed the remaining lifetime of the bound access token" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-LT-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-2" ;
+    spec:statement "SHOULD NOT exceed 300 seconds" ;
+    rdfs:comment "Continuation of DPOPSK-LT-1's sentence: the recommended ceiling on expires_in."@en ;
+    spec:requirementLevel spec:SHOULDNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> .
+
+<#DPOPSK-LT-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-3" ;
+    spec:statement "Servers MUST enforce both the session expiry and the token expiry on every request." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-LT-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-4" ;
+    spec:statement "Clients MAY re-establish before expiry and overlap the old and new sessions." ;
+    spec:requirementLevel spec:MAY ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> .
+
+<#DPOPSK-LT-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-5" ;
+    spec:statement "The server MAY invalidate any session at any time" ;
+    spec:requirementLevel spec:MAY ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> .
+
+<#DPOPSK-LT-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-6" ;
+    spec:statement "Clients MUST tolerate this at any moment (it is indistinguishable from expiry)." ;
+    rdfs:comment "'This' = a server-forced session invalidation."@en ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-LT-7> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-7" ;
+    spec:statement "A client SHOULD terminate a session it will not use again" ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> .
+
+<#DPOPSK-LT-8> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-8" ;
+    spec:statement "The server MUST verify the attestation like any other request before deleting, and respond 204" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-LT-9> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-LT-9" ;
+    spec:statement "Implementations MUST NOT persist K to durable storage." ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Negative internal property; audit/code-review only."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#lifetime> .
+
+### Fallback and no-downgrade rules (#downgrade)
+
+<#DPOPSK-DG-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DG-1" ;
+    spec:statement "a request carrying a valid DPoP proof and no dpop-sk-tagged signature MUST be processed as plain DPoP, always, on every server" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#downgrade> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-DG-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DG-2" ;
+    spec:statement "the server MUST NOT create a session under a different flavour than requested (400 instead)" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#downgrade> ;
+    sc:testGap <#gap-no-vectors-yet> ;
+    sc:restates <#DPOPSK-EST-3> , <#DPOPSK-EST-4> .
+
+<#DPOPSK-DG-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DG-3" ;
+    spec:statement "the client MUST discard a session whose response cb differs from its request" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Client> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#downgrade> ;
+    sc:testGap <#gap-no-vectors-yet> ;
+    sc:restates <#DPOPSK-RESP-4> .
+
+<#DPOPSK-DG-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DG-4" ;
+    spec:statement "The server MUST verify with the session's algorithm only, regardless of any alg parameter on the request" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#downgrade> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-DG-5> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DG-5" ;
+    spec:statement "MUST reject a mismatching alg parameter" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#downgrade> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-DG-6> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-DG-6" ;
+    spec:statement "Servers MUST NOT advertise, and clients MUST NOT use, tls-exporter across any TLS-terminating intermediary" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#downgrade> ;
+    sc:restates <#DPOPSK-DISC-3> .
+
+### Security considerations (#sec-early-data, #sec-mitm, #sec-key-handling)
+
+<#DPOPSK-SEC-ED-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-ED-1" ;
+    spec:statement "establishment requests and attested requests MUST be rejected (with the standard challenge) if received as early data" ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:Enforceable ;
+    rdfs:comment "Deterministically testable with a TLS 1.3 test client offering 0-RTT early data."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-early-data> ;
+    sc:testGap <#gap-no-vectors-yet> .
+
+<#DPOPSK-SEC-ED-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-ED-2" ;
+    spec:statement "the early exporter MUST NOT be used in key derivation" ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Internal KDF-input choice; a wrong choice surfaces indirectly as key-confirmation mismatch but the prohibition itself is audit-checked."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-early-data> .
+
+<#DPOPSK-SEC-MITM-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-MITM-1" ;
+    spec:statement "Deployments where the target URI must be reconstructed (e.g. behind a trusted reverse proxy, cb=none only) MUST derive it from configuration or authenticated forwarding information, never from unauthenticated client-controlled headers." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Deployment configuration property; spot-checkable by probing with spoofed forwarding headers but conformance is a topology/config audit."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-mitm> .
+
+<#DPOPSK-SEC-KH-1> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-KH-1" ;
+    spec:statement "they MUST NOT be logged, MUST NOT appear in URLs, MUST NOT be persisted durably" ;
+    rdfs:comment "'They' = K and the key response member (credentials)."@en ;
+    spec:requirementLevel spec:MUSTNOT ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-key-handling> .
+
+<#DPOPSK-SEC-KH-2> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-KH-2" ;
+    spec:statement "SHOULD be held non-extractable where the platform allows (WebCrypto)" ;
+    spec:requirementLevel spec:SHOULD ;
+    spec:requirementSubject <#ResourceServer> , <#Client> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-key-handling> .
+
+<#DPOPSK-SEC-KH-3> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-KH-3" ;
+    spec:statement "HMAC comparison MUST be constant-time." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    rdfs:comment "Timing discipline; checkable by code audit or statistical timing analysis, not a deterministic vector."@en ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-key-handling> .
+
+<#DPOPSK-SEC-KH-4> a spec:Requirement ;
+    dcterms:identifier "DPOPSK-SEC-KH-4" ;
+    spec:statement "session_id MAY appear in logs (it is an identifier, not a secret)" ;
+    spec:requirementLevel spec:MAY ;
+    spec:requirementSubject <#ResourceServer> ;
+    sc:testability sc:AccountableExistence ;
+    sc:anchor <https://jeswr.github.io/dpop-sk-spec/#sec-key-handling> .

@@ -1,0 +1,16 @@
+{
+  "name": "@jeswr/spec-companion-tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Validator for machine-readable spec companions: SHACL spec-of-specs shapes + the global guardrail checks (unique ids, anchor bases, RFC 2119 keyword/level consistency, verbatim-quote fidelity).",
+  "type": "module",
+  "scripts": {
+    "test": "node test.mjs",
+    "validate": "node validate.mjs"
+  },
+  "dependencies": {
+    "n3": "^1.26.0",
+    "rdf-ext": "^2.5.2",
+    "shacl-engine": "^1.1.2"
+  }
+}

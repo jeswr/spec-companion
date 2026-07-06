@@ -1,0 +1,244 @@
+# AUTHORED-BY Claude Fable 5
+#
+# The "spec-of-specs" SHACL shape — the STRICT AUTHORING GUARDRAIL for machine-readable
+# spec companions. A companion graph that does not conform to these shapes is rejected by
+# the validator (tools/validate.mjs), which also runs the handful of checks core SHACL
+# cannot express portably (duplicate stable ids, anchors under the spec base, RFC 2119
+# keyword/level consistency, verbatim-quote fidelity against the spec's HTML source).
+#
+# What the shapes enforce (the mechanized subset of W3C SpecGL, QA Framework:
+# Specification Guidelines, W3C REC 2005 — conformance clause, classes of products,
+# consistent RFC 2119 usage, test assertions):
+#
+#   1. Every companion declares WHAT spec it describes, at WHICH pinned version, and WHO
+#      extracted it (provenance).
+#   2. The spec declares its conformance section, its security-considerations coverage,
+#      and at least one conformance class + one requirement.
+#   3. Every normative statement has: a stable id, a verbatim statement text, exactly one
+#      canonical RFC 2119 level, at least one actor binding to a DECLARED conformance
+#      class, exactly one testability-spine tag, and exactly one resolvable anchor.
+#   4. No MUST/MUST NOT tagged Enforceable without a test case or an honest test gap.
+#   5. Premature (P) statements always carry a justification.
+
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix sc:      <https://w3id.org/jeswr/spec-companion#> .
+@prefix spec:    <http://www.w3.org/ns/spec#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# 1. The companion document itself
+#################################################################
+
+sc:CompanionDocumentShape a sh:NodeShape ;
+    sh:targetClass sc:CompanionDocument ;
+    sh:property [
+        sh:path sc:companionOf ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A companion must name exactly one full-text specification IRI it is the companion of." ;
+    ] ;
+    sh:property [
+        sh:path sc:specVersion ;
+        sh:datatype xsd:string ;
+        sh:minLength 7 ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A companion must pin the exact spec version (git sha or dated version) it was extracted from." ;
+    ] ;
+    sh:property [
+        sh:path prov:wasAttributedTo ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:message "A companion must carry extraction provenance (prov:wasAttributedTo)." ;
+    ] ;
+    sh:property [
+        sh:path dcterms:created ;
+        sh:datatype xsd:date ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:message "A companion must carry its extraction date (dcterms:created, xsd:date)." ;
+    ] .
+
+#################################################################
+# 2. The specification node
+#################################################################
+
+sc:SpecificationShape a sh:NodeShape ;
+    sh:targetClass spec:Specification ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:minLength 5 ;
+        sh:message "The specification must carry exactly one title." ;
+    ] ;
+    sh:property [
+        sh:path spec:requirement ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:class spec:Requirement ;
+        sh:message "A normative specification companion must enumerate at least one requirement, each typed spec:Requirement." ;
+    ] ;
+    sh:property [
+        sh:path spec:conformance ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:message "The specification must declare its conformance-section anchor (SpecGL Requirement 1: include a conformance clause)." ;
+    ] ;
+    sh:property [
+        sh:path spec:consideration ;
+        sh:qualifiedValueShape [ sh:class spec:SecurityConsiderations ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "The specification must declare security-considerations coverage (a spec:consideration node typed spec:SecurityConsiderations)." ;
+    ] .
+
+#################################################################
+# 3. Conformance classes (classes of products)
+#################################################################
+
+sc:ConformanceClassShape a sh:NodeShape ;
+    sh:targetClass sc:ConformanceClass ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+        sh:message "A conformance class must carry a human label." ;
+    ] ;
+    sh:property [
+        sh:path sc:definedBy ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:pattern "#" ;
+        sh:message "A conformance class must anchor to where the full text defines it." ;
+    ] .
+
+#################################################################
+# 4. Normative statements
+#################################################################
+
+sc:RequirementShape a sh:NodeShape ;
+    sh:targetClass spec:Requirement ;
+
+    # Stable id — uppercase dash-separated token; global uniqueness is enforced by the
+    # validator (core SHACL cannot compare across focus nodes).
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:pattern "^[A-Z0-9]+(-[A-Z0-9]+)*$" ;
+        sh:message "Every statement needs exactly one stable identifier: uppercase alphanumeric tokens joined by dashes (e.g. DPOPSK-EST-2)." ;
+    ] ;
+
+    # The verbatim statement text (quote fidelity vs the spec source is validator-checked).
+    sh:property [
+        sh:path spec:statement ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:minLength 15 ;
+        sh:message "Every statement carries exactly one verbatim quote of the normative sentence (spec:statement)." ;
+    ] ;
+
+    # Exactly one canonical RFC 2119 level. The strict profile normalizes the RFC 8174
+    # synonyms (REQUIRED/SHALL -> MUST, RECOMMENDED -> SHOULD, OPTIONAL -> MAY) at
+    # extraction time, so companions use only the canonical five.
+    sh:property [
+        sh:path spec:requirementLevel ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( spec:MUST spec:MUSTNOT spec:SHOULD spec:SHOULDNOT spec:MAY ) ;
+        sh:message "Every statement has exactly one requirement level, from the canonical five (spec:MUST, spec:MUSTNOT, spec:SHOULD, spec:SHOULDNOT, spec:MAY)." ;
+    ] ;
+
+    # Actor binding: at least one subject, each a DECLARED conformance class.
+    sh:property [
+        sh:path spec:requirementSubject ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:class sc:ConformanceClass ;
+        sh:message "Every statement binds at least one actor, and each must be a declared sc:ConformanceClass." ;
+    ] ;
+
+    # Exactly one testability-spine tag.
+    sh:property [
+        sh:path sc:testability ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( sc:Enforceable sc:AccountableIntegrity sc:AccountableExistence sc:Premature ) ;
+        sh:message "Every statement carries exactly one testability tag: E, A-int, A-exist, or P." ;
+    ] ;
+
+    # Exactly one anchor into the published full text (must carry a fragment; the
+    # under-the-spec-base check is validator-side).
+    sh:property [
+        sh:path sc:anchor ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:pattern "#" ;
+        sh:message "Every statement anchors to exactly one fragment in the published full text." ;
+    ] ;
+
+    # Optional links stay well-formed.
+    sh:property [
+        sh:path spec:testCase ;
+        sh:nodeKind sh:IRI ;
+        sh:message "Test-case links must be IRIs (conformance-vector case URLs or td:TestCase resources)." ;
+    ] ;
+    sh:property [
+        sh:path sc:testGap ;
+        sh:class sc:TestGap ;
+        sh:message "Test-gap links must point at a described sc:TestGap node." ;
+    ] ;
+    sh:property [
+        sh:path sc:restates ;
+        sh:class spec:Requirement ;
+        sh:message "sc:restates must point at another declared statement." ;
+    ] ;
+
+    # Optional link to a machine-checked formal model of the behaviour.
+    sh:property [
+        sh:path sc:formalModel ;
+        sh:nodeKind sh:IRI ;
+        sh:message "Formal-model links must be IRIs." ;
+    ] .
+
+# THE COVERAGE GUARDRAIL: an Enforceable MUST/MUST NOT statement must link a test case
+# or an honest test gap — never neither.
+#
+# NOTE: this and the P-guardrail below live in SEPARATE node shapes (same target class)
+# deliberately: shacl-engine 1.1.x silently keeps only one sh:or list when a single
+# shape node carries two sh:or constraints (verified empirically; per SHACL both must
+# apply). One sh:or per shape node sidesteps the engine limitation.
+
+sc:RequirementCoverageShape a sh:NodeShape ;
+    sh:targetClass spec:Requirement ;
+    sh:message "An Enforceable MUST/MUST NOT statement must link a conformance test case (spec:testCase) or an honest test gap (sc:testGap) — never neither." ;
+    sh:or (
+        [ sh:not [ sh:property [ sh:path sc:testability ; sh:hasValue sc:Enforceable ] ] ]
+        [ sh:not [ sh:or (
+            [ sh:property [ sh:path spec:requirementLevel ; sh:hasValue spec:MUST ] ]
+            [ sh:property [ sh:path spec:requirementLevel ; sh:hasValue spec:MUSTNOT ] ]
+          ) ] ]
+        [ sh:property [ sh:path spec:testCase ; sh:minCount 1 ] ]
+        [ sh:property [ sh:path sc:testGap ; sh:minCount 1 ] ]
+    ) .
+
+# THE HONESTY GUARDRAIL for P: a statement declared untestable-as-specified always
+# carries a justification (a test gap explaining why).
+
+sc:RequirementPrematureShape a sh:NodeShape ;
+    sh:targetClass spec:Requirement ;
+    sh:message "A statement tagged Premature (P) must carry an sc:testGap justifying why it is not testable as specified." ;
+    sh:or (
+        [ sh:not [ sh:property [ sh:path sc:testability ; sh:hasValue sc:Premature ] ] ]
+        [ sh:property [ sh:path sc:testGap ; sh:minCount 1 ] ]
+    ) .
+
+#################################################################
+# 5. Test gaps
+#################################################################
+
+sc:TestGapShape a sh:NodeShape ;
+    sh:targetClass sc:TestGap ;
+    sh:property [
+        sh:path dcterms:description ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:minLength 30 ;
+        sh:message "A test gap must carry a real justification (dcterms:description, >= 30 chars; plain or language-tagged)." ;
+    ] .
