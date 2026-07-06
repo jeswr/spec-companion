@@ -150,9 +150,11 @@ model (all reused terms unless prefixed `sc:`):
 | Test gaps | `sc:TestGap` + `dcterms:description` (≥30 chars) | The per-statement GAPS.md |
 
 Namespace minted: `https://w3id.org/jeswr/spec-companion#` (**11 terms + 4 individuals**;
-everything else is `spec:`/`td:`/`earl:`/`dcterms:`/`prov:`/`skos:`/`rdfs:`). The w3id
-redirect is the usual `needs:user` follow-up; nothing depends on it resolving (all
-consumers get the vocab file from the repo).
+everything else is `spec:`/`td:`/`earl:`/`dcterms:`/`prov:`/`skos:`/`rdfs:`). The
+canonical home of the vocabulary is this repo
+(`https://github.com/jeswr/spec-companion`); namespace resolution is served from
+jeswr.org (built separately — no w3id PR is planned). Nothing depends on the namespace
+IRI resolving: all consumers get the vocab file from the repo.
 
 **Why verbatim quotes rather than paraphrase**: a paraphrase is a second normative text —
 exactly the ambiguity this format exists to remove. The quote + anchor makes the
@@ -297,7 +299,9 @@ join natively; coordinate via that repo's issue tracker once it is published.
 ## 9. Follow-ups (for the tracker, not markdown TODOs — enumerated here as the phase-1 report)
 
 1. Per-spec rollout beads (§7), one at a time, each gated by this validator.
-2. w3id.org/jeswr/spec-companion redirect (needs:user, standard w3id PR).
+2. Namespace resolution for `https://w3id.org/jeswr/spec-companion#` served from
+   jeswr.org (being built separately; no w3id PR — maintainer directive). Until then the
+   canonical home is https://github.com/jeswr/spec-companion.
 3. Upstream minimal repro of the shacl-engine double-`sh:or` limitation.
 4. dpop-sk errata candidates from the six extraction notes (issue on `jeswr/dpop-sk-spec`).
 5. `agentic-solid-conformance` clause→statement-id migration (additive).

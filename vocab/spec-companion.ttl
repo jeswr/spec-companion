@@ -17,8 +17,9 @@
 # jeswr/solid-certification v2-speculative), the test-gap (honest no-vector
 # justification) node, and four small link/annotation properties.
 #
-# Namespace: https://w3id.org/jeswr/spec-companion#   (w3id redirect = a needs:user
-# follow-up, consistent with the other w3id.org/jeswr vocabularies).
+# Namespace: https://w3id.org/jeswr/spec-companion#   (canonical home:
+# https://github.com/jeswr/spec-companion; namespace resolution is served from
+# jeswr.org, built separately — no w3id PR is planned).
 
 @prefix sc:      <https://w3id.org/jeswr/spec-companion#> .
 @prefix spec:    <http://www.w3.org/ns/spec#> .
