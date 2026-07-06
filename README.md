@@ -46,9 +46,11 @@ quoted sentence fails until the companion is re-extracted in the same commit.
 
 ## Status
 
-Phase 1 (investigation + design + the dpop-sk worked example). Per-spec rollout —
-a2a-rdf-extension, solid-webauthn-reauth-spec, agent-authz-credential-spec, lws-spec —
-is tracked work, one spec at a time. The `agentic-solid-note` is wholly informative and
+Phase 1 (investigation + design + the dpop-sk worked example) is complete and the
+per-spec rollout is underway: companions live beside their specs in
+`dpop-sk-spec`, `a2a-rdf-extension`, `solid-webauthn-reauth-spec`, `lws-spec`
+(core + rdf-transform) and `solid-sparql-query`. Remaining tracked target:
+`agent-authz-credential-spec`. The `agentic-solid-note` is wholly informative and
 gets no requirement companion by design.
 
 ## Provenance
