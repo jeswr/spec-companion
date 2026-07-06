@@ -30,6 +30,8 @@ const cases = [
   { name: 'anchor outside spec base', file: `${EX}/negative/bad-anchor.ttl`, expectPass: false, marker: 'G2' },
   { name: 'level/keyword mismatch', file: `${EX}/negative/wrong-level-keyword.ttl`, expectPass: false, marker: 'G3' },
   { name: 'duplicate stable id', file: `${EX}/negative/dup-id.ttl`, expectPass: false, marker: 'G1' },
+  { name: 'orphan statement (not linked from the spec)', file: `${EX}/negative/orphan-statement.ttl`, expectPass: false, marker: 'orphan' },
+  { name: 'sibling-prefix anchor (startsWith boundary trap)', file: `${EX}/negative/sibling-prefix-anchor.ttl`, expectPass: false, marker: 'G2' },
 ];
 
 let failures = 0;

@@ -118,6 +118,16 @@ sc:ConformanceClassShape a sh:NodeShape ;
 sc:RequirementShape a sh:NodeShape ;
     sh:targetClass spec:Requirement ;
 
+    # No orphan statements: every statement is reachable from exactly one
+    # spec:Specification via spec:requirement, so consumers traversing the spec node
+    # see the complete inventory.
+    sh:property [
+        sh:path [ sh:inversePath spec:requirement ] ;
+        sh:minCount 1 ; sh:maxCount 1 ;
+        sh:class spec:Specification ;
+        sh:message "Every statement must be linked from its specification via spec:requirement (no orphan statements)." ;
+    ] ;
+
     # Stable id — uppercase dash-separated token; global uniqueness is enforced by the
     # validator (core SHACL cannot compare across focus nodes).
     sh:property [

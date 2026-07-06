@@ -189,15 +189,19 @@ date; the spec declares conformance-clause and security-considerations coverage 
 requirement + ≥1 conformance class (SpecGL Reqs 1/3 mechanized); every statement has
 exactly one stable id (pattern-checked), one verbatim quote (min length), one canonical
 level (`sh:in` the five), ≥1 subject each `sh:class sc:ConformanceClass`, exactly one
-testability tag, exactly one fragment-bearing anchor; **the coverage guardrail** (an
+testability tag, exactly one fragment-bearing anchor; **no orphan statements** (an
+inverse-path constraint ties every statement back to exactly one `spec:Specification`
+via `spec:requirement`); **the coverage guardrail** (an
 E-tagged MUST/MUST NOT must link `spec:testCase` or `sc:testGap` — never neither) and
 **the P-honesty guardrail** (P always justified) as `sh:or` node shapes; test gaps need
 real descriptions (≥30 chars).
 
 **Validator globals (what core SHACL can't say portably):**
 - **G1** stable ids unique across the file;
-- **G2** every anchor/definedBy IRI startsWith the `sc:companionOf` spec base and has a
-  fragment;
+- **G2** every anchor/definedBy IRI has a non-empty fragment and its document part is
+  the spec base document itself (or, for a directory-style base ending in `/`, a
+  document under it) — boundary-safe, so a sibling IRI that merely string-prefixes the
+  base (`…/spec-evil` vs base `…/spec`) is rejected;
 - **G3** RFC 2119 keyword/level consistency — the quote contains its own level's keyword
   family (RFC 8174 synonyms accepted; negated families tokenized first so "MUST NOT"
   never satisfies MUST); foreign-family keywords in one quote are split-candidate
