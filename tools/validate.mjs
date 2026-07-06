@@ -20,6 +20,9 @@
 //        G4  quote fidelity (only with --spec-html): every spec:statement is a
 //            verbatim substring of the normalized spec source (tags stripped,
 //            entities decoded, [[refs]] unbracketed, whitespace collapsed)
+//        G5  every statement is referenced exactly once via spec:requirement from
+//            THE sc:companionOf spec node (a decoy second spec:Specification cannot
+//            satisfy the linkage)
 //
 // Exit codes: 0 = conforms, 1 = violations, 2 = usage/parse error.
 
@@ -120,17 +123,28 @@ if (specBases.length !== 1) {
   errors.push(`G2 expected exactly one sc:companionOf on the companion document, found ${specBases.length}`);
 }
 const specBase = specBases[0];
-// Boundary-safe: an anchor is "under" the base only when its document part IS the base
-// document (with or without the trailing slash), or — for a directory-style base ending
-// in '/' — a document under that directory. A bare startsWith would wrongly accept
-// sibling documents like <https://example.org/spec-evil/> for base <https://example.org/spec>.
+// Boundary-safe AND normalization-safe: both IRIs go through the WHATWG URL parser
+// (which resolves dot segments, so "…/spec/../spec-evil#x" cannot lexically escape a
+// directory base) and the anchor's NORMALIZED document part must BE the base document
+// (trailing-slash tolerant) or, for a directory-style base ending in '/', a document
+// under that directory. A bare startsWith would wrongly accept sibling documents like
+// <https://example.org/spec-evil/> for base <https://example.org/spec>.
 function anchorUnderBase(anchor, base) {
-  const hash = anchor.indexOf('#');
-  if (hash < 0) return { ok: false, why: 'has no fragment' };
-  if (hash === anchor.length - 1) return { ok: false, why: 'has an empty fragment' };
-  const doc = anchor.slice(0, hash);
-  const baseNoSlash = base.endsWith('/') ? base.slice(0, -1) : base;
-  const ok = doc === base || doc === baseNoSlash || (base.endsWith('/') && doc.startsWith(base));
+  let a, b;
+  try {
+    a = new URL(anchor);
+    b = new URL(base);
+  } catch {
+    return { ok: false, why: 'or the spec base is not a parseable absolute URL' };
+  }
+  if (a.hash.length < 2) return { ok: false, why: 'has no (or an empty) fragment' };
+  a.hash = '';
+  b.hash = '';
+  const doc = a.href;             // normalized: dot segments resolved, host lowercased
+  const baseDoc = b.href;
+  const baseNoSlash = baseDoc.endsWith('/') ? baseDoc.slice(0, -1) : baseDoc;
+  const ok = doc === baseDoc || doc === baseNoSlash
+    || (baseDoc.endsWith('/') && doc.startsWith(baseDoc));
   return { ok, why: ok ? '' : `is not under the spec base <${base}>` };
 }
 if (specBase) {
@@ -141,6 +155,20 @@ if (specBase) {
       if (!ok) {
         errors.push(`G2 anchor <${q.object.value}> ${why} (on <${q.subject.value}>)`);
       }
+    }
+  }
+}
+
+// ---------- G5: statements linked from THE companion's spec node ----------
+// The SHACL inverse-path constraint requires SOME spec:Specification to reference each
+// statement; a decoy second Specification node would satisfy it while leaving the
+// statement invisible from the sc:companionOf spec. Require the linkage from exactly
+// the companionOf node.
+if (specBase) {
+  for (const st of statements) {
+    const n = store.getQuads(nn(specBase), nn(`${NS.spec}requirement`), st, null).length;
+    if (n !== 1) {
+      errors.push(`G5 statement <${st.value}> is referenced ${n} time(s) via spec:requirement from the companion's spec <${specBase}> — required exactly once`);
     }
   }
 }

@@ -32,6 +32,8 @@ const cases = [
   { name: 'duplicate stable id', file: `${EX}/negative/dup-id.ttl`, expectPass: false, marker: 'G1' },
   { name: 'orphan statement (not linked from the spec)', file: `${EX}/negative/orphan-statement.ttl`, expectPass: false, marker: 'orphan' },
   { name: 'sibling-prefix anchor (startsWith boundary trap)', file: `${EX}/negative/sibling-prefix-anchor.ttl`, expectPass: false, marker: 'G2' },
+  { name: 'dot-segment anchor traversal', file: `${EX}/negative/dot-segment-anchor.ttl`, expectPass: false, marker: 'G2' },
+  { name: 'decoy second Specification claiming a statement', file: `${EX}/negative/decoy-spec-orphan.ttl`, expectPass: false, marker: 'G5' },
 ];
 
 let failures = 0;

@@ -1,0 +1,39 @@
+# AUTHORED-BY Claude Fable 5
+# EXPECTED FAIL (G2): the anchor uses dot-segment traversal
+# (<https://spec.example/spec/../spec-evil#x>) to lexically sit "under" the
+# directory-style base <https://spec.example/spec/> while resolving OUTSIDE it.
+# URL normalization must resolve the dot segments before the boundary check.
+@base <https://spec.example/spec/spec.statements.ttl> .
+@prefix sc:      <https://w3id.org/jeswr/spec-companion#> .
+@prefix spec:    <http://www.w3.org/ns/spec#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<> a sc:CompanionDocument ;
+    sc:companionOf <https://spec.example/spec/> ;
+    sc:specVersion "0123456789abcdef" ;
+    dcterms:created "2026-07-06"^^xsd:date ;
+    prov:wasAttributedTo <https://jeswr.org/#me> .
+
+<https://spec.example/spec/> a spec:Specification ;
+    dcterms:title "Example Protocol"@en ;
+    spec:conformance <https://spec.example/spec/#conformance> ;
+    spec:consideration <https://spec.example/spec/#security> ;
+    spec:requirement <#EX-1> .
+
+<https://spec.example/spec/#security> a spec:SecurityConsiderations .
+
+<#Server> a sc:ConformanceClass ;
+    rdfs:label "Example server"@en ;
+    sc:definedBy <https://spec.example/spec/#terminology> .
+
+<#EX-1> a spec:Requirement ;
+    dcterms:identifier "EX-1" ;
+    spec:statement "The server MUST reject unsigned requests." ;
+    spec:requirementLevel spec:MUST ;
+    spec:requirementSubject <#Server> ;
+    sc:testability sc:Enforceable ;
+    sc:anchor <https://spec.example/spec/../spec-evil#rejection> ;
+    spec:testCase <https://github.com/example/vectors/blob/main/cases/reject-unsigned/case.json> .

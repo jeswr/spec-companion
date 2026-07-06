@@ -198,17 +198,22 @@ real descriptions (≥30 chars).
 
 **Validator globals (what core SHACL can't say portably):**
 - **G1** stable ids unique across the file;
-- **G2** every anchor/definedBy IRI has a non-empty fragment and its document part is
-  the spec base document itself (or, for a directory-style base ending in `/`, a
-  document under it) — boundary-safe, so a sibling IRI that merely string-prefixes the
-  base (`…/spec-evil` vs base `…/spec`) is rejected;
+- **G2** every anchor/definedBy IRI has a non-empty fragment and its
+  URL-normalized document part (WHATWG URL parse — dot segments resolved, so
+  `…/spec/../spec-evil#x` cannot escape a directory base) is the spec base document
+  itself or, for a directory-style base ending in `/`, a document under it —
+  boundary-safe, so a sibling IRI that merely string-prefixes the base
+  (`…/spec-evil` vs base `…/spec`) is rejected;
 - **G3** RFC 2119 keyword/level consistency — the quote contains its own level's keyword
   family (RFC 8174 synonyms accepted; negated families tokenized first so "MUST NOT"
   never satisfies MUST); foreign-family keywords in one quote are split-candidate
   warnings;
 - **G4** quote fidelity — with `--spec-html`, every `spec:statement` must be a verbatim
   substring of the normalized spec source (tags stripped, entities decoded, `[[refs]]`
-  unbracketed, whitespace collapsed).
+  unbracketed, whitespace collapsed);
+- **G5** every statement is referenced exactly once via `spec:requirement` from THE
+  `sc:companionOf` spec node — a decoy second `spec:Specification` claiming a statement
+  cannot satisfy the linkage (complements the SHACL inverse-path constraint).
 
 Deliberate split rationale: SHACL-SPARQL could express G1–G3 but the suite's JS engines
 (`shacl-engine`, `rdf-validate-shacl`) don't implement it uniformly; core-SHACL + a
